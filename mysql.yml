@@ -1,0 +1,21 @@
+version: '3.5'
+services:
+  mariadb:
+    env_file: .env
+    container_name: maria-db
+    image: linuxserver/mariadb
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+      - MYSQL_ROOT_PASSWORD=${MYSQLDB_ROOT_PASS}
+    volumes:
+      - ../containers.d/mysql/data:/config
+    restart: always
+    networks:
+      - mariadb
+    ports:
+      - "3306:3306"
+networks:
+  mariadb:
+    name: mariadb

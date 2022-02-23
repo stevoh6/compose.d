@@ -1,0 +1,45 @@
+version: '3.5'
+services:
+  influxdb:
+    env_file: .env
+    container_name: influxdb
+    image: influxdb:latest
+    volumes:
+      - ../containers.d/influxdb/influxdb:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DATA_ENGINE=tsm1
+      - INFLUXDB_REPORTING_DISABLED=false
+      # - INFLUXDB_HTTP_AUTH_ENABLED=false
+      - INFLUXDB_ADMIN_USER=${INFLUXDB_ADMIN_USER_NAME}
+      - INFLUXDB_ADMIN_USER_PASSWORD=${INFLUXDB_ADMIN_USER_PASS}
+      - INFLUXDB_USER=${INFLUXDB_USER_NAME}
+      - INFLUXDB_USER_PASSWORD=${INFLUXDB_USER_PASS}
+      - INFLUXDB_DB=${INFLUXDB_DB_NAME}
+    restart: always
+    # network_mode: host
+    networks:
+      - influxdb
+    ports:
+      - "8086:8086"
+      - "8083:8083"
+  chronograf:
+    env_file: .env
+    container_name: chronograf
+    image: chronograf:latest
+    volumes:
+      - ../containers.d/influxdb/chronograf:/var/lib/chronograf
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://inbluxdb:8086
+      - INFLUXDB_USERNAME=${INFLUXDB_ADMIN_USER_NAME}
+      - INFLUXDB_PASSWORD=${INFLUXDB_ADMIN_USER_PASS}
+    restart: unless-stopped
+    # network_mode: host
+    networks:
+      - influxdb
+    ports:
+      - "3002:8888"
+networks:
+  influxdb:
+    name: influxdb

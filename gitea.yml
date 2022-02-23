@@ -1,0 +1,23 @@
+version: "3"
+services:
+  gitea:
+    env_file: .env
+    container_name: gitea
+    image: gitea/gitea:latest
+    environment:
+      - USER_UID=${USER_PUID}
+      - USER_GID=${USER_GUID}
+      - DB_TYPE=mysql
+      - DB_HOST=${MYSQLDB_URL}
+      - DB_NAME=${GITEA_MYSQLDB_DB_NAME}
+      - DB_USER=${GITEA_MYSQLDB_DB_USER_NAME}
+      - DB_PASSWD=${GITEA_MYSQLDB_USER_PASS}
+    restart: unless-stopped
+    # network_mode: host
+    volumes:
+      - ../containers.d/gitea/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3003:3000"
+      - "222:22"

@@ -1,0 +1,34 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!.gitkeep
+!*.conf
+!*.conf.back
+!*.conf.bak
+!default
+!*_params
+!mime.types
+!Dockerfile
+!*.yml
+!*.yaml
+!99*.ini
+!*.md
+!*.jar
+!*.dis
+!*.cfg
+!*.txt
+!*.Dockerfile
+!*.json
+!*.example
+!*.dis
+
+# etc...
+
+# ...even if they are in subdirectories
+!*/
+#
+## if the files to be tracked are in subdirectories
+#!*/a/b/file1.txt
+#!*/a/b/c/*

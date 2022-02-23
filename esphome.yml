@@ -1,0 +1,14 @@
+version: '3'
+services:
+  esphome:
+    env_file: .env
+    container_name: esphome
+    image: esphome/esphome:latest
+    volumes:
+      - ../containers.d/esphome/data:/config
+      # Use local time for logging timestamps
+      - /etc/localtime:/etc/localtime:ro
+    network_mode: host
+    restart: unless-stopped
+    ports:
+      - "6052:6052"

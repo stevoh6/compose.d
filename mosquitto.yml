@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mosquitto:
+    env_file: .env
+    image: toke/mosquitto
+    container_name: mosquitto
+    environment:
+      # - PUID=${USER_PUID}
+      # - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ../containers.d/mosquitto/config:/mqtt/config:rw
+      - ../containers.d/mosquitto/data:/mqtt/data:rw
+      - ../containers.d/mosquitto/logs:/mqtt/log:rw
+    network_mode: host
+    privileged: true
+    restart: unless-stopped

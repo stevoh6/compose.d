@@ -1,0 +1,26 @@
+version: '3'
+services:
+  tuyagateway:
+    build:
+      context: .
+      dockerfile: tuyagateway.Dockerfile
+    hostname: tuyagateway
+    container_name: tuyagateway
+    volumes:
+      - ../containers.d/tuyagateway/tuyagateway-conf/tuyagateway.conf:/usr/src/app/tuyagateway/etc/tuyagateway.conf
+    command: "tuyagateway -ll DEBUG -cf /usr/src/app/tuyagateway/etc/tuyagateway.conf"
+    restart: unless-stopped
+    networks:
+      - tuyagateway-network
+  gismocaster:
+    build:
+      context: .
+      dockerfile: tuyagateway.gismocaster.Dockerfile
+    hostname: gismocaster
+    container_name: gismocaster
+    volumes:
+      - ../containers.d/tuyagateway/gismocaster-conf/mqtt/settings.json:/usr/src/app/gismocaster/web/mqtt/fixtures/setting.json
+    command: "python web/manage.py runserver 0.0.0.0:8000 --noreload"
+    restart: unless-stopped
+    ports:
+      - "8124:8000"

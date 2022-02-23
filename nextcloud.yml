@@ -1,0 +1,33 @@
+version: '3'
+services:
+  nextcloud:
+    env_file: .env
+    image: linuxserver/nextcloud
+    container_name: nextcloud
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ../containers.d/nextcloud/config:/config
+      - ../containers.d/nextcloud/data:/data
+    ports:
+      - "8443:443"
+    restart: unless-stopped
+    depends_on:
+      - nextcloud_db
+  nextcloud_db:
+    env_file: .env
+    image: linuxserver/mariadb
+    container_name: nextcloud_db
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+      - MYSQL_ROOT_PASSWORD=${MYSQLDB_ROOT_PASS}
+      - MYSQL_DATABASE=${NEXTCLOUD_MYSQLDB_DB_NAME}
+      - MYSQL_USER=${NEXTCLOUD_MYSQLDB_USER_NAME}
+      - MYSQL_PASSWORD=${NEXTCLOUD_MYSQLDB_USER_PASS}
+    volumes:
+      - ../containers.d/nextcloud/db-data:/config
+    restart: unless-stopped

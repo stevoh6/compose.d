@@ -1,0 +1,55 @@
+version: "2"
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  adguard:
+    env_file: .env
+    container_name: adguard53
+    domainname: docker
+    hostname: adguard
+    image: adguard/adguardhome:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      #      - "67:67/udp" # DHCP
+      - '853:853/tcp'
+      - '3003:3000/tcp'
+    environment:
+      ServerIP: ${SERVER_IP}
+      PROXY_LOCATION: adguard
+      VIRTUAL_HOST: YOUR_DNS_DOMAIN
+      LETSENCRYPT_HOST: YOUR_DNS_DOMAIN
+      VIRTUAL_PORT: 80
+      TZ: 'Europe/Bratislava'
+    # Volumes store your data between container upgrades
+    volumes:
+      - ../containers.d/adguard53opt-adguardhome-work:/opt/adguardhome/work
+      - ../containers.d/adguard53/opt-adguardhome-conf:/opt/adguardhome/conf
+      - ../containers.d/adguard53/opt-adguardhome-certs:/opt/adguardhome/certs:ro
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    # https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    depends_on:
+      - dhcphelper
+    networks:
+      backend:
+        ipv4_address: '172.199.1.100'
+  # DHCP helper sening boradcasting messages back to clients
+  # https://discourse.pi-hole.net/t/dhcp-with-docker-compose-and-bridge-networking/17038
+  # https://docs.pi-hole.net/docker/DHCP/#docker-pi-hole-with-a-bridge-networking
+  dhcphelper:
+    build:
+      context: .
+      dockerfile: adguard53.dhcphelper.Dockerfile
+    container_name: dhcphelper53
+    restart: unless-stopped
+    network_mode: "host"
+    command: -s 172.199.1.100
+    cap_add:
+      - NET_ADMIN
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.199.1.0/24

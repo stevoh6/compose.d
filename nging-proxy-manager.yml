@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+  nginx-proxy-manager:
+    env_file: .env
+    container_name: nginx-proxy-manager
+    image: 'jc21/nginx-proxy-manager:latest'
+    volumes:
+      - ../containers.d/nginx-proxy-manager/data:/data
+      - ../containers.d/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    environment:
+      DB_MYSQL_HOST: ${MYSQLDB_HOST}
+      DB_MYSQL_PORT: ${MYSQLDB_PORT}
+      DB_MYSQL_USER: ${NGINXPROXY_MYSQLDB_USER_NAME}
+      DB_MYSQL_PASSWORD: ${NGINXPROXY_MYSQLDB_USER_PASS}
+      DB_MYSQL_NAME: ${NGINXPROXY_MYSQLDB_DB_NAME}
+#      MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASS}
+    restart: always
+    networks:
+      - nginx-proxy-manager
+      - mariadb
+    ports:
+      - "80:80"
+      - "8081:81"
+      - "443:443"
+      # - "8443:8443"
+networks:
+  nginx-proxy-manager:
+    name: nginx-proxy-manager
+  mariadb:
+    name: mariadb

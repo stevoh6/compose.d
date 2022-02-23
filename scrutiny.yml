@@ -1,0 +1,29 @@
+version: "3"
+services:
+  scrutiny:
+    env_file: .env
+    image: lscr.io/linuxserver/scrutiny:amd64-latest
+    container_name: scrutiny
+    privileged: True
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN #optional
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+      - SCRUTINY_API_ENDPOINT=http://localhost:8080
+      - SCRUTINY_WEB=true
+      - SCRUTINY_COLLECTOR=true
+    volumes:
+      - ./data:/config
+      - /dev/disk:/dev/disk
+      - /run/udev:/run/udev:ro
+    ports:
+      - 3008:8080
+    devices:
+      - /dev:/dev
+      # - /dev/sda:/dev/sda
+      # - /dev/sdb:/dev/sdb
+      # - /dev/nvme1n1:/dev/nvme1n1
+    restart: unless-stopped

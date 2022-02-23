@@ -1,0 +1,16 @@
+version: "3.6"
+services:
+  node-red:
+    build:
+      context: .
+      dockerfile: nodered.Dockerfile
+    env_file: .env
+    container_name: node-red
+    image: local-custom-node-red
+    volumes:
+      - ../containers.d/node-red/data:/data
+    environment:      
+      - TZ=${TIMEZONE}
+    restart: always
+    ports:
+      - "1880:1880"

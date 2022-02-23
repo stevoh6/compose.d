@@ -1,0 +1,18 @@
+---
+version: "2.1"
+services:
+  organizr:
+    env_file: .env
+    image: organizr/organizr
+    container_name: organizr
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+      - FPM=FALSE
+      - BRANCH=v2-master
+    volumes:
+      - "../containers.d/organizr/data:/config"
+    ports:
+      - "4040:80"
+    restart: unless-stopped

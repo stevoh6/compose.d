@@ -1,0 +1,25 @@
+version: '3'
+services:
+  homeassistant:
+    env_file: .env
+    container_name: home-assistant
+    image: homeassistant/home-assistant
+    volumes:
+      - ../containers.d/home-assistant/data:/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=${TIMEZONE}
+    restart: always
+    network_mode: host
+    ports:
+      - "8123:8123"
+  hass-configurator:
+    container_name: hass-configurator
+    image: "causticlab/hass-configurator-docker:x86_64"
+    restart: always
+    ports:
+      - "3218:3218/tcp"
+    network_mode: host
+    volumes:
+      - "../containers.d/home-assistant/hass-configurator-config:/config"
+      - "../containers.d/home-assistant/data:/hass-config"

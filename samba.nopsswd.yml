@@ -1,0 +1,31 @@
+version: '3'
+services:
+  samba:
+    build:
+      context: .
+      dockerfile: samba.nopsswd.Dockerfile
+    env_file: .env
+    container_name: samba-nopsswd
+    environment:
+      TZ: ${TIMEZONE}
+#    network_mode: host
+    #    privileged: true
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+    # read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+    # stdin_open: true
+    # tty: true
+    volumes:
+      - ../containers.d/samba.nopsswd/conf:/etc/samba:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /etc/shadow:/etc/shadow:ro
+      - /media/3tb:/share/3tb
+      - /media/4tb:/share/4tb
+#      - /media/matusg-ftp:/share/matusg-ftp

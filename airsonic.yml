@@ -1,0 +1,27 @@
+version: "2.1"
+services:
+  airsonic:
+    env_file: .env
+    image: ghcr.io/linuxserver/airsonic
+    container_name: airsonic
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+      - CONTEXT_PATH=music.webcode.sk #optional
+      # - JAVA_OPTS=<options> #optional
+    volumes:
+      # - </path/to/config>:/config
+      # - </path/to/music>:/music
+      # - </path/to/playlists>:/playlists
+      # - </path/to/podcasts>:/podcasts
+      # - </path/to/other media>:/media #optional
+      - "../containers.d/airsonic/data:/config"
+      - "/media/3tb/Media/Music:/data/music"
+      - "/media/3tb/Media/Playlists:/data/playlists"
+      - "/media/3tb/Media/Podcasts:/data/podcasts"
+    ports:
+      - 4040:4040
+    # devices:
+      # - /dev/snd:/dev/snd #optional
+    restart: unless-stopped

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  yacht:
+    env_file: .env
+    container_name: yacht
+    image: selfhostedpro/yacht
+    volumes:
+      - ../containers.d/yacht/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=${TIMEZONE}
+    restart: always
+    #    network_mode: host
+    ports:
+      - "9001:8000"
+
+# The default login is admin@yacht.local and pass

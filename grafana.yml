@@ -1,0 +1,27 @@
+version: '3.5'
+services:
+  grafana:
+    env_file: .env
+    container_name: grafana
+    image: grafana/grafana:latest
+    volumes:
+      # - ../containers.d/grafana/config:/etc/grafana
+      - ../containers.d/grafana/data:/var/lib/grafana
+      # - ../containers.d/grafana/home:/usr/share/grafana
+      - ../containers.d/grafana/logs:/var/log/grafana
+    environment:
+      # - GF_LOG_MODE=console file
+      # - GF_SECURITY_ADMIN_USER=${IOT_USER_NAME}
+      # - GF_SECURITY_ADMIN_PASSWORD=${IOT_USER_PASS}
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource,natel-influx-admin-panel
+    user: "0"
+    restart: unless-stopped
+    # network_mode: host
+    networks:
+      - influxdb
+    ports:
+      - "3001:3000"
+networks:
+  influxdb:
+    name: influxdb

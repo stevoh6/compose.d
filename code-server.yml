@@ -1,0 +1,22 @@
+---
+version: "2.1"
+services:
+  code-server:    
+    env_file: .env
+    image: lscr.io/linuxserver/code-server
+    container_name: code-server
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+      - PASSWORD=${WEB_USER_PASS} #optional
+      # - HASHED_PASSWORD= #optional
+      - SUDO_PASSWORD=${WEB_USER_PASS} #optional
+      # - SUDO_PASSWORD_HASH= #optional
+      # - PROXY_DOMAIN=code-server.my.domain #optional
+      - DEFAULT_WORKSPACE=/config/workspace #optional
+    volumes:
+      - ../containers.d/code-server/data:/config
+    ports:
+      - "7443:8443"
+    restart: unless-stopped

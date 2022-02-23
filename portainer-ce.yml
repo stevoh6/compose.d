@@ -1,0 +1,17 @@
+version: '3'
+services:
+  portainer:
+    env_file: .env
+    container_name: portainer-ce
+    image: portainer/portainer-ce:alpine
+    volumes:
+      - ../containers.d/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=${TIMEZONE}
+    restart: always
+#    network_mode: host
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+      - "9443:9443"

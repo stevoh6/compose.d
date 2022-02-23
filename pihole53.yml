@@ -1,0 +1,59 @@
+version: "2"
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    env_file: .env
+    container_name: pihole53
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      # - "67:67/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: ${TIMEZONE}
+      VIRTUAL_HOST: pi.hole
+      DNSMASQ_LISTENING: all
+      PIHOLE_DNS_: '1.1.1.2#53;1.0.0.2#53'
+      ServerIP: ${SERVER_IP}
+      WEBUIBOXEDLAYOUT: traditional
+      SKIPGRAVITYONBOOT: 0
+      WEBPASSWORD: ${WEB_USER_PASS}
+    dns:
+      - 127.0.0.1 #this must be first !
+      - 1.1.1.1
+      - 1.0.0.1
+    # Volumes store your data between container upgrades
+    volumes:
+      # gravity.db needs to have permission 664 an user 999:999
+      - '../containers.d/pihole53/etc-pihole/:/etc/pihole/'
+      - '../containers.d/pihole53/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    depends_on:
+      - dhcphelper
+    networks:
+      backend:
+        ipv4_address: '172.1992.0.100'
+  # DHCP helper sening boradcasting messages back to clients
+  # https://discourse.pi-hole.net/t/dhcp-with-docker-compose-and-bridge-networking/17038
+  # https://docs.pi-hole.net/docker/DHCP/#docker-pi-hole-with-a-bridge-networking
+  dhcphelper:
+    build:
+      context: .
+      dockerfile: pihole53.dhcphelper.Dockerfile
+    container_name: dhcphelper53
+    restart: unless-stopped
+    network_mode: "host"
+    command: -s 172.199.0.100
+    cap_add:
+      - NET_ADMIN
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: 172.199.0.0/16

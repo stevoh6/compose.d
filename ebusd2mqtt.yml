@@ -1,0 +1,22 @@
+version: '3.2'
+
+services:
+  ebusd2mqtt:
+    image: john30/ebusd
+    container_name: ebusd2mqtt
+    restart: always
+    environment:
+      - EBUSD_SCANCONFIG=08
+      - EBUSD_DEVICE=/dev/ttyUSB0
+      - EBUSD_MQTTPORT=${MQTT_PORT}
+      - EBUSD_MQTTHOST=${MQTT_HOST}
+      - EBUSD_MQTTPASS=${MQTT_USER_PASS}
+      - EBUSD_MQTTUSER=${MQTT_USER_NAME}
+      - EBUSD_CONFIGPATH=/etc/ebusd
+    ports:
+      - 8888:8888
+    volumes:
+      - /var/containers.d/ebusd2mqtt/data:/data
+      - /var/containers.d/ebusd2mqtt/etc-ebusd:/etc/ebusd
+    devices:
+      - /dev/ttyUSB0

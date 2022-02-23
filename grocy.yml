@@ -1,0 +1,16 @@
+---
+version: "2.1"
+services:
+  grocy:
+    env_file: .env
+    image: ghcr.io/linuxserver/grocy:version-v2.7.1
+    container_name: grocy
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ../containers.d/grocy/data:/config
+    ports:
+      - 9283:80
+    restart: unless-stopped

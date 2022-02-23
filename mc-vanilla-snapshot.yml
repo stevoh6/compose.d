@@ -1,0 +1,47 @@
+version: "3"
+# Other docker-compose examples in /examples
+
+services:
+  minecraft:
+    env_file: .env
+    image: itzg/minecraft-server
+    container_name: mc-vanilla-snapshot
+    ports:
+      - "25565:25565"
+      - "8865:8123"
+    volumes:
+      - "../containers.d/mc-vanilla-snapshot/data:/data"
+    environment:
+      EULA: "TRUE"
+      VERSION: "SNAPSHOT"
+      #      TYPE: "PAPER"
+      ENABLE_AUTOPAUSE: "TRUE"
+      TZ: ${TIMEZONE}
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "java-rcon-pass"
+      # RCON_PORT: 28016
+      # enable env variable replacement
+      REPLACE_ENV_VARIABLES: "TRUE"
+      # define an optional prefix for your env variables you want to replace
+      ENV_VARIABLE_PREFIX: "CFG_"
+      # and here are the actual variables
+      CFG_DB_HOST: ${MYSQLDB_URL}
+      CFG_DB_NAME: "mc-vanilla-snapshot"
+      CFG_DB_USER: ${MC_MYSQLDB_USER_NAME}
+      CFG_DB_PASSWORD: ${MC_MYSQLDB_USER_PASS}
+      # JAVA config
+      INIT_MEMORY: "128M"
+      MAX_MEMORY: "2G"
+      MEMORY: "128M"
+      #server.properties
+      # LEVEL_SEED: -895041041
+      GAMEMODE: survival
+      DIFFICULTY: "normal"
+      OPS: ${MC_OP_PLAYERS}
+      MAX_PLAYERS: 5
+      MAX_WORLD_SIZE: 10000
+      SERVER_NAME: "Home - MC-Vanilla -snapshot"
+      MOTD: "Home - MC-Vanilla -snapshot"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true

@@ -1,0 +1,15 @@
+version: '3'
+services:
+  portainer:
+    env_file: .env
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    volumes:
+      - ../containers.d/zigbee2mqtt/data:/data
+      - /run/udev:/run/udev
+    environment:
+      - TZ=${TIMEZONE}
+    restart: always
+#    network_mode: host
+    ports:
+      - "4000:8080"

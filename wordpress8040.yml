@@ -1,0 +1,39 @@
+version: '3'
+services:
+  wp8040:
+    env_file: .env
+    container_name: wp8040
+    image:  wordpress:php8.0-fpm-alpine
+    environment:
+      WORDPRESS_DB_HOST: ${MYSQLDB_URL}
+      WORDPRESS_DB_USER: ${WP8040_MYSQLDB_USER_NAME}
+      WORDPRESS_DB_PASSWORD: ${WP8040_MYSQLDB_USER_PASS}
+      WORDPRESS_DB_NAME: ${WP8040_MYSQLDB_DB_NAME}
+      WORDPRESS_TABLE_PREFIX: wp
+    volumes:
+      - ../containers.d/wordpress8040/var-www-html:/var/www/html
+      # Use local time for logging timestamps
+      - /etc/localtime:/etc/localtime:ro
+    # network_mode: host
+    networks:
+      - wp8040-network
+    restart: unless-stopped
+    # ports:
+    #   - "8040:80"
+  nginx8040:
+    depends_on:
+      - wp8040
+    image: nginx:1.15.12-alpine
+    container_name: nginx8040
+    restart: unless-stopped
+    ports:
+      - "8040:80"
+    volumes:
+      - ../containers.d/wordpress8040/var-www-html:/var/www/html
+      - ../containers.d/wordpress8040/etc-nginx-conf.d:/etc/nginx/conf.d
+      # - certbot-etc:/etc/letsencrypt
+    networks:
+      - wp8040-network
+
+networks:
+  wp8040-network:

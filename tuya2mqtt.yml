@@ -1,0 +1,16 @@
+version: '3'
+services:
+  tuya2mqtt:
+    build:
+      context: .
+      dockerfile: tuya2mqtt.Dockerfile
+    hostname: tuya2mqtt
+    container_name: tuya2mqtt
+    environment:
+      - DEBUG=tuya-mqtt:*
+    restart: unless-stopped
+    volumes:
+      - ../containers.d/tuya2mqtt/conf/config.json:/opt/tuya-mqtt/config.json
+      - ../containers.d/tuya2mqtt/conf/devices.conf:/opt/tuya-mqtt/devices.conf
+    command: "DEBUG=tuya-mqtt:* node tuya-mqtt.js"
+    # network_mode: host

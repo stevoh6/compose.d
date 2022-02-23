@@ -1,0 +1,23 @@
+version: '3.4'
+services:
+  bds:
+    env_file: .env
+    image: itzg/minecraft-bedrock-server
+    container_name: mc-bedrock-latest
+    environment:
+      EULA: "TRUE"
+      LEVEL_SEED: -895041041
+      GAMEMODE: survival
+      DIFFICULTY: "normal"
+      OPS: ${MC_OP_PLAYERS}
+      MAX_PLAYERS: 5
+      MAX_WORLD_SIZE: 10000
+      SERVER_NAME: "Home - MC-Bedrock -latest"
+      MOTD: "Home - MC-Bedrock -latest"
+      ALLOW_CHEATS: "true"
+    ports:
+      - 19132:19132/udp
+    volumes:
+      - ../containers.d/mc-bedrock/data:/data
+    stdin_open: true
+    tty: true

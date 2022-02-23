@@ -1,0 +1,36 @@
+version: "3"
+services:
+  netdata :
+    env_file: .env
+    image: netdata/netdata
+    container_name: netdata
+    hostname: ${HOST_NAME}
+    privileged: True
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${DOCKER_PGID}
+      - TZ=${TIMEZONE}
+      - DOCKER_USR=root
+      - NETDATA_CLAIM_TOKEN=${NETDATA_CLAIM_TOKEN}
+      - NETDATA_CLAIM_URL=${NETDATA_CLAIM_URL}
+      - NETDATA_CLAIM_ROOMS=${NETDATA_CLAIM_ROOMS}
+    volumes:
+      - ../containers.d/netdata/data:/etc/netdata
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+      - /etc/os-release:/host/etc/os-release:ro
+      - /sys:/host/sys:ro
+      - /proc:/host/proc:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/passwd:/host/etc/passwd:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 19999:19999
+    restart: unless-stopped
+volumes:
+  netdatalib:
+  netdatacache: 

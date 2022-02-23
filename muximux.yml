@@ -1,0 +1,15 @@
+version: '3'
+services:
+  muximux:
+    env_file: .env
+    image: ghcr.io/linuxserver/muximux
+    container_name: muximux
+    environment:
+      - PUID=${USER_PUID}
+      - PGID=${USER_PGID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ../containers.d/muximux/data:/config
+    ports:
+      - "8090:80"
+    restart: unless-stopped
